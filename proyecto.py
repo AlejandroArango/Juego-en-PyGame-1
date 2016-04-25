@@ -6,14 +6,14 @@ ancho=1000
 alto=600
 
 #clase jugador
-class Jugador(pygame.sprite.Sprite):	
+class Jugador(pygame.sprite.Sprite):
 	def __init__(self,imagen):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load(imagen).convert_alpha()
 		self.rect = self.image.get_rect()
 		self.vida=100
 	def chocar(self):
-		self.vida -=10	
+		self.vida -=10
 
 #clase enemigo
 class Enemigo(pygame.sprite.Sprite):
@@ -22,22 +22,22 @@ class Enemigo(pygame.sprite.Sprite):
 		self.image = pygame.image.load(imagen).convert_alpha()
 		self.rect = self.image.get_rect()
 		self.direccion=0
-		self.disparar=random.randrange(100)	
+		self.disparar=random.randrange(100)
 	def update(self):
 		if self.rect.y >= (alto-20):
 			self.direccion=1
 		if self.rect.y <= 10:
 			self.direccion=0
-		
+
 		if self.direccion==0:
 			self.rect.y+=5
 		else:
-			self.rect.y-=5 
+			self.rect.y-=5
 
 		self.disparar-=1
 		if self.disparar<0:
-			self.disparar=random.randrange(100)	
-		
+			self.disparar=random.randrange(100)
+
 #clase balas
 class Bala(pygame.sprite.Sprite):
 	def __init__(self,imagen):
@@ -109,7 +109,7 @@ if __name__=='__main__':
 		for event in pygame.event.get():
 			#if event.type == pygame.KEYDOWN:
 			if event.type == pygame.QUIT or event.type == pygame.KEYDOWN:
-				terminar=True 
+				terminar=True
 
 
 			elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -119,8 +119,8 @@ if __name__=='__main__':
 				bala.rect.y=dato[1]+17
 				ls_bala.add(bala)
 				ls_todos.add(bala)
-				print (dato)	
-	
+				print (dato)
+
 		#pantalla.fill(blanco)
 		pantalla.blit(fondo,(0,0))
 		jugador.rect.x=dato[0]
@@ -169,6 +169,5 @@ if __name__=='__main__':
 		ls_todos.draw(pantalla)
 		#deben ser las ultimas instrucciones
 		pygame.display.flip()
-		reloj.tick(60)
+		reloj.tick(50)
 		#pygame.time.Clock.tick(60) frames por segundo
-
