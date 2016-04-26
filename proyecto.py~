@@ -8,6 +8,26 @@ contador=0
 ancho=800
 alto=600
 
+
+#clase animacion fondo
+#class Fondo():	
+#	
+#	def __init__(self, fondo):
+#		self.fondo=fondo
+#		self.contador=0
+#		
+#	def updatecontador(self):
+#		self.contador=self.contador+1
+#		
+#	def ini_fondo(self):
+#		pantalla.blit(self.fondo['img/espacio.png'],(0,-600+(self.contador%200*3)))
+#		pantalla.blit(self.fondo['img/espacio.png'],(0,self.contador%200*3))				
+#		
+#	def ini_polvo(self):
+#		pantalla.blit(self.fondo['img/espacio_efecto.png'],(0,-600+(self.contador%40*15)))
+#		pantalla.blit(self.fondo['img/espacio_efecto.png'],(0,self.contador%40*15))
+
+#clase jugador
 class Jugador(pygame.sprite.Sprite):
 	def __init__(self,imagen):
 		pygame.sprite.Sprite.__init__(self)
@@ -87,6 +107,7 @@ if __name__=='__main__':
 	#posicion del mouse
 	dato=pygame.mouse.get_pos()
 	#sonido.play() para que suene
+	#sonido fondo
 	pygame.mixer.music.load('sound/music1.ogg')
 	#play(loops=0, start=0.0) -1 reproduce indefinidamente
 	pygame.mixer.music.play(-1)
