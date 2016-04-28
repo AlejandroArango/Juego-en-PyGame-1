@@ -1,12 +1,69 @@
 import pygame
 import random
+from jugador import*
+from vida import*
+from enemigo import*
+from bala import*
 
-
+#constantes
 contador=0
-
+puntaje=0
 #dimensiones de la pantalla
 ancho=800
 alto=600
+<<<<<<< HEAD
+dim_pantalla = [ancho,alto]
+=======
+
+# Transform component x from cartesian coordinate to screen coordinate
+def inv_xcar(px):
+    return int(-ancho/2+px)
+
+# Transform component y from cartesian coordinate to screen coordinate
+def inv_ycar(py):
+    return int(alto/2-py)
+
+# Transform component x from cartesian coordinate to screen coordinate
+def xcar(px):
+    return int(ancho/2+px)
+
+# Transform component y from cartesian coordinate to screen coordinate
+def ycar(py):
+    return int(alto/2-py)
+
+def switchFromOctantZeroFrom(octant, x, y):
+    if (octant == 0):
+        return x, y
+    elif (octant == 1):
+        return y, x
+    elif (octant == 2):
+        return y, -x
+    elif (octant == 3):
+        return -x, y
+
+def switchFromOctantZeroTo(octant, x, y):
+    if (octant == 0):
+        return x, y
+    elif (octant == 1):
+        return y, x
+    elif (octant == 2):
+        return -y, x
+    elif (octant == 3):
+        return -x, y
+
+def returnOctant(p0, p1):
+    dy = p1[1] - p0[1]
+    dx = p1[0] - p0[0]
+    if (dx == 0):
+    	dx = 1
+    m = dy / dx
+    if (m < -1):
+        return 2
+    if (m < 0):
+        return 3
+    if (m < 1):
+        return 0
+    return 1
 
 # Transform component x from cartesian coordinate to screen coordinate
 def inv_xcar(px):
@@ -121,6 +178,10 @@ class Bala(pygame.sprite.Sprite):
 			self.rect.x, self.rect.y = switchFromOctantZeroTo(self.octant, self.draw_x, self.draw_y)
 			self.rect.x = xcar(self.rect.x)
 			self.rect.y = ycar(self.rect.y)
+<<<<<<< HEAD
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
+=======
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 
 def Crear_enemigos(num, l_e, l_t):
     for i in range(num):
@@ -140,9 +201,16 @@ def ini_polvo(contador):
 	pantalla.blit(fondob,(0,-600+(contador%40*15)))
 	pantalla.blit(fondob,(0,contador%40*15))
 
+
+
+
+
 if __name__=='__main__':
 	#inicializar pantalla
 	pygame.init()
+	#fuentes de texto
+	fuente = pygame.font.Font("Bitsumishi.TTF", 36)
+
 	pygame.display.set_caption("Retro Invaders")
 	pantalla=pygame.display.set_mode([ancho,alto])
 
@@ -152,10 +220,12 @@ if __name__=='__main__':
 
 	#visibilidad puntero mouse
 	pygame.mouse.set_visible(False)
+	#posicion inicial del puntero//ayuda a pocisionar la nave
+	pygame.mouse.set_pos(400,520)
 	#posicion del mouse
 	dato=pygame.mouse.get_pos()
 	#sonido.play() para que suene
-	pygame.mixer.music.load('sound/music1.ogg')
+	pygame.mixer.music.load('sound/Gradius.mp3')
 	#play(loops=0, start=0.0) -1 reproduce indefinidamente
 	pygame.mixer.music.play(-1)
 	#lista con todos los sprites
@@ -165,7 +235,7 @@ if __name__=='__main__':
 	ls_jugador  = pygame.sprite.Group()
 	ls_enemigo  = pygame.sprite.Group()
 	#imagenes del juego
-	jugador=Jugador('img/nave.png')
+	jugador=Jugador('img/nave2.png')
 	jugador.rect.x=dato[0]
 	jugador.rect.y=dato[1]
 	ls_jugador.add(jugador)
@@ -186,6 +256,7 @@ if __name__=='__main__':
 
 	#tomar dos puntos con click y trazar ruta de movimiento NOTA algoritmo punto medio
 	#hacer movimiento de scrolling sale de la pantalla aparece en el otro lado
+	#progressBar().update(100)
 	while (not terminar):
 		dato=pygame.mouse.get_pos()
 		for event in pygame.event.get():
@@ -204,20 +275,37 @@ if __name__=='__main__':
 				ls_bala.add(bala)
 				ls_todos.add(bala)
 				#print (dato)
+<<<<<<< HEAD
+<<<<<<< HEAD
+		#inicializacion fondos
+=======
+=======
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 		ini_fondo(contador)
 		ini_polvo(contador)
 		contador+=1
 
 		jugador.rect.x=dato[0]
 		jugador.rect.y=dato[1]
-
+		#jugador choca con enemigo
 		ls_choque = pygame.sprite.spritecollide(jugador, ls_enemigo, True)
 
 		for elemento in ls_choque:
 			#print ('choque')
 			jugador.chocar()
+<<<<<<< HEAD
+<<<<<<< HEAD
+			jugador.menosVida()
+   		if jugador.vida == 0:
+			fin_juego = True
+=======
 			#print (jugador.vida)
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
+=======
+			#print (jugador.vida)
+>>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 
 
 		for b in ls_bala:
@@ -225,7 +313,7 @@ if __name__=='__main__':
 			for impacto in ls_impacto:
 				ls_bala.remove(b)
 				ls_todos.remove(b)
-				puntos+=1
+				puntaje+=1
 				num_enemigos-=1
 				#print (puntos)
 
@@ -274,12 +362,18 @@ if __name__=='__main__':
 			num_enemigos=random.randrange(5)
 			ls_enemigo, ls_todos= Crear_enemigos(num_enemigos, ls_enemigo, ls_todos)
 
+		#mostrar puntaje jugador
+		txt_puntos = fuente.render("Puntaje: "+ str(puntaje), True, NEGRO)
+		pantalla.blit(txt_puntos, [10,10])
+
+
+
 		#para actualizar
 		ls_todos.update()
 		#pantalla.blit(enemigo,(200,200))
 		ls_todos.draw(pantalla)
 		#deben ser las ultimas instrucciones
 		pygame.display.flip()
-		reloj.tick(50)
+		reloj.tick(60)
 		
 		#pygame.time.Clock.tick(60) frames por segundo
