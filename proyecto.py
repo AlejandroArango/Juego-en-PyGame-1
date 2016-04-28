@@ -1,7 +1,6 @@
 import pygame
 import random
 from jugador import*
-from vida import*
 from enemigo import*
 from bala import*
 
@@ -11,177 +10,10 @@ puntaje=0
 #dimensiones de la pantalla
 ancho=800
 alto=600
-<<<<<<< HEAD
+#color
+NEGRO = (0, 0, 0)
+
 dim_pantalla = [ancho,alto]
-=======
-
-# Transform component x from cartesian coordinate to screen coordinate
-def inv_xcar(px):
-    return int(-ancho/2+px)
-
-# Transform component y from cartesian coordinate to screen coordinate
-def inv_ycar(py):
-    return int(alto/2-py)
-
-# Transform component x from cartesian coordinate to screen coordinate
-def xcar(px):
-    return int(ancho/2+px)
-
-# Transform component y from cartesian coordinate to screen coordinate
-def ycar(py):
-    return int(alto/2-py)
-
-def switchFromOctantZeroFrom(octant, x, y):
-    if (octant == 0):
-        return x, y
-    elif (octant == 1):
-        return y, x
-    elif (octant == 2):
-        return y, -x
-    elif (octant == 3):
-        return -x, y
-
-def switchFromOctantZeroTo(octant, x, y):
-    if (octant == 0):
-        return x, y
-    elif (octant == 1):
-        return y, x
-    elif (octant == 2):
-        return -y, x
-    elif (octant == 3):
-        return -x, y
-
-def returnOctant(p0, p1):
-    dy = p1[1] - p0[1]
-    dx = p1[0] - p0[0]
-    if (dx == 0):
-    	dx = 1
-    m = dy / dx
-    if (m < -1):
-        return 2
-    if (m < 0):
-        return 3
-    if (m < 1):
-        return 0
-    return 1
-
-# Transform component x from cartesian coordinate to screen coordinate
-def inv_xcar(px):
-    return int(-ancho/2+px)
-
-# Transform component y from cartesian coordinate to screen coordinate
-def inv_ycar(py):
-    return int(alto/2-py)
-
-# Transform component x from cartesian coordinate to screen coordinate
-def xcar(px):
-    return int(ancho/2+px)
-
-# Transform component y from cartesian coordinate to screen coordinate
-def ycar(py):
-    return int(alto/2-py)
-
-def switchFromOctantZeroFrom(octant, x, y):
-    if (octant == 0):
-        return x, y
-    elif (octant == 1):
-        return y, x
-    elif (octant == 2):
-        return y, -x
-    elif (octant == 3):
-        return -x, y
-
-def switchFromOctantZeroTo(octant, x, y):
-    if (octant == 0):
-        return x, y
-    elif (octant == 1):
-        return y, x
-    elif (octant == 2):
-        return -y, x
-    elif (octant == 3):
-        return -x, y
-
-def returnOctant(p0, p1):
-    dy = p1[1] - p0[1]
-    dx = p1[0] - p0[0]
-    if (dx == 0):
-    	dx = 1
-    m = dy / dx
-    if (m < -1):
-        return 2
-    if (m < 0):
-        return 3
-    if (m < 1):
-        return 0
-    return 1
-
-class Jugador(pygame.sprite.Sprite):
-	def __init__(self,imagen):
-		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load(imagen).convert_alpha()
-		self.rect = self.image.get_rect()
-		self.vida=100
-	def chocar(self):
-		self.vida -=10
-
-#clase enemigo
-class Enemigo(pygame.sprite.Sprite):
-	def __init__(self,imagen):
-		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load(imagen).convert_alpha()
-		self.rect = self.image.get_rect()
-		self.direccion=0
-		self.disparar=random.randrange(100) + 100 
-	def update(self):
-		#ancho pantalla - ancho imagen
-		if self.rect.x >= (ancho-62):
-			self.direccion=1
-		if self.rect.x <= 0:
-			self.direccion=0
-
-		if self.direccion==0:
-			self.rect.x+=5
-		else:
-			self.rect.x-=5
-
-		self.disparar-=1
-		if self.disparar<0:
-			self.disparar=random.randrange(100) + 100
-
-#clase balas
-class Bala(pygame.sprite.Sprite):
-	def __init__(self,imagen):
-		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load(imagen).convert_alpha()
-		self.rect = self.image.get_rect()
-		self.jugador=1
-
-		self.draw_x = 0
-		self.draw_y = 0
-		self.octant = 0
-		self.dy = 0
-		self.dx = 0
-		self.d = 0
-		self.velocity = random.randrange(5) + 3
-
-	def update(self):
-		if self.jugador==1:
-			self.rect.y-=5#bala jugador
-		else:
-			# MidPoint Line Algotirhm
-			if self.d > 0:
-				self.draw_y -= self.velocity
-				self.d -= (2 * self.dx)
-			self.draw_x -= self.velocity
-			self.d += (2 * self.dy)
-
-			self.rect.x, self.rect.y = switchFromOctantZeroTo(self.octant, self.draw_x, self.draw_y)
-			self.rect.x = xcar(self.rect.x)
-			self.rect.y = ycar(self.rect.y)
-<<<<<<< HEAD
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
-=======
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 
 def Crear_enemigos(num, l_e, l_t):
     for i in range(num):
@@ -200,10 +32,6 @@ def ini_fondo(contador):
 def ini_polvo(contador):
 	pantalla.blit(fondob,(0,-600+(contador%40*15)))
 	pantalla.blit(fondob,(0,contador%40*15))
-
-
-
-
 
 if __name__=='__main__':
 	#inicializar pantalla
@@ -275,14 +103,8 @@ if __name__=='__main__':
 				ls_bala.add(bala)
 				ls_todos.add(bala)
 				#print (dato)
-<<<<<<< HEAD
-<<<<<<< HEAD
-		#inicializacion fondos
-=======
-=======
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
 
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
+		#inicializacion fondos
 		ini_fondo(contador)
 		ini_polvo(contador)
 		contador+=1
@@ -295,18 +117,9 @@ if __name__=='__main__':
 		for elemento in ls_choque:
 			#print ('choque')
 			jugador.chocar()
-<<<<<<< HEAD
-<<<<<<< HEAD
 			jugador.menosVida()
    		if jugador.vida == 0:
 			fin_juego = True
-=======
-			#print (jugador.vida)
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
-=======
-			#print (jugador.vida)
->>>>>>> 8f080e1f4454bfe763d98becdf7f2c035395c5d1
-
 
 		for b in ls_bala:
 			ls_impacto=pygame.sprite.spritecollide(b, ls_enemigo, True)
@@ -365,8 +178,6 @@ if __name__=='__main__':
 		#mostrar puntaje jugador
 		txt_puntos = fuente.render("Puntaje: "+ str(puntaje), True, NEGRO)
 		pantalla.blit(txt_puntos, [10,10])
-
-
 
 		#para actualizar
 		ls_todos.update()
