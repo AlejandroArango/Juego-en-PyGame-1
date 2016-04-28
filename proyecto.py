@@ -8,6 +8,56 @@ contador=0
 ancho=800
 alto=600
 
+# Transform component x from cartesian coordinate to screen coordinate
+def inv_xcar(px):
+    return int(-ancho/2+px)
+
+# Transform component y from cartesian coordinate to screen coordinate
+def inv_ycar(py):
+    return int(alto/2-py)
+
+# Transform component x from cartesian coordinate to screen coordinate
+def xcar(px):
+    return int(ancho/2+px)
+
+# Transform component y from cartesian coordinate to screen coordinate
+def ycar(py):
+    return int(alto/2-py)
+
+def switchFromOctantZeroFrom(octant, x, y):
+    if (octant == 0):
+        return x, y
+    elif (octant == 1):
+        return y, x
+    elif (octant == 2):
+        return y, -x
+    elif (octant == 3):
+        return -x, y
+
+def switchFromOctantZeroTo(octant, x, y):
+    if (octant == 0):
+        return x, y
+    elif (octant == 1):
+        return y, x
+    elif (octant == 2):
+        return -y, x
+    elif (octant == 3):
+        return -x, y
+
+def returnOctant(p0, p1):
+    dy = p1[1] - p0[1]
+    dx = p1[0] - p0[0]
+    if (dx == 0):
+    	dx = 1
+    m = dy / dx
+    if (m < -1):
+        return 2
+    if (m < 0):
+        return 3
+    if (m < 1):
+        return 0
+    return 1
+
 class Jugador(pygame.sprite.Sprite):
 	def __init__(self,imagen):
 		pygame.sprite.Sprite.__init__(self)
@@ -24,7 +74,7 @@ class Enemigo(pygame.sprite.Sprite):
 		self.image = pygame.image.load(imagen).convert_alpha()
 		self.rect = self.image.get_rect()
 		self.direccion=0
-		self.disparar=random.randrange(100)
+		self.disparar=random.randrange(100) + 100 
 	def update(self):
 		#ancho pantalla - ancho imagen
 		if self.rect.x >= (ancho-62):
@@ -39,7 +89,7 @@ class Enemigo(pygame.sprite.Sprite):
 
 		self.disparar-=1
 		if self.disparar<0:
-			self.disparar=random.randrange(100)
+			self.disparar=random.randrange(100) + 100
 
 #clase balas
 class Bala(pygame.sprite.Sprite):
@@ -48,17 +98,35 @@ class Bala(pygame.sprite.Sprite):
 		self.image = pygame.image.load(imagen).convert_alpha()
 		self.rect = self.image.get_rect()
 		self.jugador=1
+
+		self.draw_x = 0
+		self.draw_y = 0
+		self.octant = 0
+		self.dy = 0
+		self.dx = 0
+		self.d = 0
+		self.velocity = random.randrange(5) + 3
+
 	def update(self):
 		if self.jugador==1:
 			self.rect.y-=5#bala jugador
 		else:
-			self.rect.y+=5#bala enemigo
+			# MidPoint Line Algotirhm
+			if self.d > 0:
+				self.draw_y -= self.velocity
+				self.d -= (2 * self.dx)
+			self.draw_x -= self.velocity
+			self.d += (2 * self.dy)
+
+			self.rect.x, self.rect.y = switchFromOctantZeroTo(self.octant, self.draw_x, self.draw_y)
+			self.rect.x = xcar(self.rect.x)
+			self.rect.y = ycar(self.rect.y)
 
 def Crear_enemigos(num, l_e, l_t):
     for i in range(num):
        enemigo=Enemigo('img/enemigo3.png')
-       enemigo.rect.x=random.randrange(ancho-62)
-       enemigo.rect.y=random.randrange(alto-147)
+       enemigo.rect.x=random.randrange(ancho - 100)
+       enemigo.rect.y=random.randrange(alto - 300)
        l_e.add(enemigo)
        l_t.add(enemigo)
     return l_e, l_t
@@ -107,10 +175,12 @@ if __name__=='__main__':
 	ls_enemigo, ls_todos = Crear_enemigos(5, ls_enemigo, ls_todos)
 	#refrescar pantalla
 	pygame.display.flip()
-	#puntuacion
+	#variables del juego
 	puntos = 0
 	num_enemigos=5
 	terminar=False
+	p0 = [0, 0]
+	p1 = [0, 0]
 	reloj=pygame.time.Clock()
 
 
@@ -133,7 +203,7 @@ if __name__=='__main__':
 				bala.rect.y=dato[1]
 				ls_bala.add(bala)
 				ls_todos.add(bala)
-				print (dato)
+				#print (dato)
 
 		ini_fondo(contador)
 		ini_polvo(contador)
@@ -145,9 +215,9 @@ if __name__=='__main__':
 		ls_choque = pygame.sprite.spritecollide(jugador, ls_enemigo, True)
 
 		for elemento in ls_choque:
-			print ('choque')
+			#print ('choque')
 			jugador.chocar()
-			print (jugador.vida)
+			#print (jugador.vida)
 
 
 		for b in ls_bala:
@@ -157,13 +227,13 @@ if __name__=='__main__':
 				ls_todos.remove(b)
 				puntos+=1
 				num_enemigos-=1
-				print (puntos)
+				#print (puntos)
 
 		for be in ls_balae:
 			impactos=ls_impacto=pygame.sprite.spritecollide(be, ls_jugador, False)
 			for imp in impactos:
 				jugador.chocar()
-				print jugador.vida, ' ', puntos
+				#print jugador.vida, ' ', puntos
 				ls_balae.remove(be)
 				ls_todos.remove(be)
 
@@ -171,8 +241,32 @@ if __name__=='__main__':
 			if e.disparar==0:
 				balae=Bala('img/balaenemigo.png')
 				balae.jugador=0
-				balae.rect.x=e.rect.x
-				balae.rect.y=e.rect.y
+
+				# Guarde la pos del jugador
+				p0[0] = inv_xcar(jugador.rect.x) + 15
+				p0[1] = inv_ycar(jugador.rect.y)
+
+				# Guarde la pos de el enemigo que disparo
+				p1[0] = inv_xcar(e.rect.x)
+				p1[1] = inv_ycar(e.rect.y)
+				#print (p0, p1)
+				
+				# Decide a que octante pertenece la pendiente
+				balae.octant = returnOctant(p0, p1)
+
+				# Transforma con respecto al octante
+				p0[0], p0[1] = switchFromOctantZeroFrom(balae.octant, p0[0], p0[1])
+				p1[0], p1[1] = switchFromOctantZeroFrom(balae.octant, p1[0], p1[1])
+
+				# Inicializa las variables de decision
+				balae.dy = p1[1] - p0[1]
+				balae.dx = p1[0] - p0[0]
+				balae.d = 2 * balae.dy - balae.dx
+				
+				# Inicializa la pos de la bala
+				balae.draw_x = p1[0]
+				balae.draw_y = p1[1]
+
 				ls_todos.add(balae)
 				ls_balae.add(balae)
 
